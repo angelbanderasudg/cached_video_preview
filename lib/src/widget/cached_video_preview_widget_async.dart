@@ -56,9 +56,11 @@ class _CachedVideoPreviewWidgetAsyncState
         SourceType.remote,
         {},
       );
-      setState(() {
-        data = res;
-      });
+      if (mounted) {
+        setState(() {
+          data = res;
+        });
+      }
     }();
     super.initState();
   }
