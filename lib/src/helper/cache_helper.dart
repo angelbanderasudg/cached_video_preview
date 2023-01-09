@@ -22,6 +22,22 @@ class CachedVideoPreviewHelper {
   final Set<String> _fetchers = <String>{};
 
   /// return [Stream<VideoPreviewData>] from parameters [path] and [source]
+  Future<VideoPreviewData> loadAsync(
+    String path,
+    SourceType source,
+    Map<String, String>? httpHeaders,
+  ) async {
+    final fromDbValue = await _db.getByName(path);
+    if (fromDbValue != null) {
+      return fromDbValue.toPreview;
+    } else {
+      await _execute(path, source, httpHeaders);
+      final res = await _db.getByName(path);
+      if (res != null) return res.toPreview;
+      return VideoPreviewData.remote(path);
+    }
+  }
+
   Stream<VideoPreviewData> load(
     String path,
     SourceType source,
